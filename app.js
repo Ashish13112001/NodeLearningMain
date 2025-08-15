@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const app = express();
 
@@ -40,6 +41,9 @@ app.use(mongoSanitize());
 
 // Data sanitization against xss
 app.use(xss());
+
+// Prevent parameter polution (like param -- ?sort=duration&sort=price -- yaha p sort 2 baar alag-2 likha h to problem hogi -- kiyuki mene sort ko , k basis p split kiya h(jo ki string m hota kar sakte h) but ye ek array aaega ab)
+app.use(hpp({ whitelist: ['duration', 'ratingsQuantity', 'ratingAverage', 'maxGroupSize', 'difficulty', 'price'] }));
 
 // Serving static files
 app.use(express.static(`${__dirname}/public`));
